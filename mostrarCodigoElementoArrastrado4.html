@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<style>
+#div1, #div2 , #div3{
+  float: left;
+  width: 400px;
+  height: 450px;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid black;
+}
+</style>
+<script>
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  ev.target.appendChild(document.getElementById(data));
+}
+</script>
+</head>
+<body>
+
+<h2>Arrastre y suelte</h2>
+<p>arrastre y suelte la imagen entre el primer y segundo recuadro.</p>
+
+<div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+  <img src="yopGenial.jpg" draggable="true" ondragstart="drag(event)" id="drag1" width="400" height="400">
+
+  <input type="button" value="prueba" draggable="true" ondragstart="drag(event)" id="drag2" >
+
+     <select draggable="true" ondragstart="drag(event)" id="drag22">
+	  <option value="seiya">Seiya</option>
+	  <option value="shiryu">Shiryu</option>
+	  <option value="hyoga">Hyoga</option>
+	  <option value="shun">Shun</option>
+	  <option value="ikki">Ikki</option>
+	</select> 
+
+  <input type="text" placeholder="prueba dos" draggable="true" ondragstart="drag(event)" id="drag3" >
+
+  <!-- hackeando el error de firefox para los botones draggable -->
+<!-- Wrap input with a draggable label and set pointer-events CSS property to none. 
+	Using this method, your button will be interactive and draggable. -->
+<label draggable="true" ondragstart="drag(event)" id="drag4" >
+   <select style="pointer-events: none" onclick="console.log(event)" >
+	  <option value="volvo">Volvo</option>
+	  <option value="saab">Saab</option>
+	  <option value="mercedes">Mercedes</option>
+	  <option value="audi">Audi</option>
+	</select> 
+</label>
+<!-- hackeando el error de firefox para los botones draggable -->
+<!-- Wrap input with a draggable label and set pointer-events CSS property to none. 
+	Using this method, your button will be interactive and draggable. -->
+<label draggable="true" ondragstart="drag(event)" id="drag5" >
+    <input type="submit" style="pointer-events: none" onclick="console.log(event)">
+</label>
+</div>
+
+<!-- este div debe estar vacio , pues todo html adentro será mostrado en la zona de código, así sean comentarios -->
+<div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+
+<div id="div3">
+
+
+<!-- inicio del codigo html -->
+<textarea id="txt" cols="45" rows="20"></textarea>
+
+</div>
+
+
+<script>
+
+
+  
+//The .ready() method offers a way to run JavaScript code as soon as the page's Document Object Model (DOM) becomes safe to manipulate. 
+
+$(document).ready(function(){
+
+  var contenidoGlobal="";
+
+//hay un bug en mozilla que evita que los botones sean draggable : 
+//There is already a bug on Firefox where you can't drag a button. https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+//UNA SUGERENCIA ES CANCELAR EL EVENTO CLICK DEL BOTON, PARA QUE NO SE DISPARE ESTE EVENTO CUANDO SE HACE EL BOTON DRAGGABLE
+//$('#drag2').draggable({cancel:false});
+
+
+/*
+Which is equivalent to the recommended way of calling:
+
+$(function() {
+  // Handler for .ready() called.
+});
+*/
+
+//Bind an event handler to be fired when the mouse leaves an element, or trigger that handler on an element.
+//This event is sent to an element when the mouse pointer leaves the element
+//amarramos al div2 el evento .mouseleave()
+    $('#div2').mouseleave(function(){
+
+
+//.html() These methods allow us to insert new content inside an existing element.
+//Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.
+// In an HTML document, .html() can be used to get the contents of any element.
+// If the selector expression matches more than one element, only the first match will have its HTML content returned. 
+
+//Consider this code: $( "div.demo-container" ).html();
+
+// hacemos un .append() -agregar al final- del div #log , el mensaje de llamada al handler, dentro de otro div
+//eso quiere decir que cada vez que salgamos del div2, se creará un nuevo div para mostrar el mensaje del handler
+  //$( "#txt" ).append("Handler for .mouseleave() called") ;
+
+
+        //mostramos en un alert el contenido de $(this), osea, div2, pues el alert está dentro de la función .mouseleave()
+        //html extrae el contenido html de this, es decir, del div2
+        var htmlString= ($(this).html());
+        alert(htmlString);
+        //HTML elements often consists of both an element node and a text node.
+        /*
+        To create a header (e.g. <h1>), you must create both an <h1> element and a text node:
+            var h = document.createElement("H1")                // Create a <h1> element
+            var t = document.createTextNode("Hello World");     // Create a text node
+            h.appendChild(t);                                   // Append the text to <h1> 
+
+            The createTextNode() method creates a Text Node with the specified text.
+
+Tip: Use the createElement() method to create an Element Node with the specified name.
+
+Tip: After the Text Node is created, use the element.appendChild() or element.insertBefore() method to append it to an element.
+
+
+        */
+
+//guardo en la variable htmlParaCajaTexto el textNode, es decir, el contenido de la etiqueta html textarea
+//el argumento de createTextNode será el htmlString que contiene el html extraido mediante .html() del div2
+        var htmlParaCajaTexto=document.createTextNode(htmlString);
+
+
+
+//imprimo la variable htmlParaCajaTexto en #txt es decir en el textarea, con la propiedad append, es decir, que se mantenga el contenido anterior
+
+//el orden seria tomar lo que tiene la caja de texto actualmente y guardarlo en una variable, limpiar la caja de texto, y poner el contenido anterior más el nuevo contenido
+
+
+
+/*
+//con append queda todo el historial
+
+        $( "#txt" ).append(htmlParaCajaTexto) ;
+        //$( "#txt" ).append(document.createTextNode(htmlString)) ;
+*/
+
+
+
+//sin append solamente se muestra lo que hay en la caja en ese momento
+
+        //$( "#txt" ).html(htmlParaCajaTexto) ;
+
+                $( "#txt" ).html(htmlString) ;
+
+
+
+    });//fin .mouseleave function
+
+
+
+/*
+Which is equivalent to the recommended way of calling:
+
+$(function() {
+  // Handler for .ready() called.
+});
+*/
+
+//The keyup event is sent to an element when the user releases a key on the keyboard.
+// It can be attached to any element, but the event is only sent to the element that has the focus
+    $('#txt').keyup(function(){
+
+ /*
+ $( "#target" ).keyup(function() {
+  alert( "Handler for .keyup() called." );
+});
+
+*/
+
+//.html() These methods allow us to insert new content inside an existing element.
+//Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.
+// In an HTML document, .html() can be used to get the contents of any element.
+// If the selector expression matches more than one element, only the first match will have its HTML content returned. 
+
+//Consider this code: $( "div.demo-container" ).html();
+
+//pasamos como argumento a la función .html()  el elemento $(this).val(). 
+//$(this) hace referencia al elemento $('#txt'), pues .html() está dentro de la función $('#txt').keyup()
+//eso significa que se hará la conversión a html de lo que esté dentro de '#txt' -($(this).val() -, y el rresultado se inyectará en '#div2'
+
+        $('#div2').html($(this).val());
+
+
+
+    
+}); //fin .keyup function
+
+
+
+
+
+
+
+
+}); //fin .ready function
+</script>
+
+</body>
+</html>
