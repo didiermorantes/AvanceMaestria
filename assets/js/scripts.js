@@ -26,7 +26,7 @@ function arrastrar(ev) {
     // console.log(ev);
   }
 
-  function generarNuevoId(idAnterior){
+  function generarNuevoId(idAnterior, idDivDestino){
     // console.log(idAnterior);
 
     // extraemos el nombre del id sin contar el número
@@ -38,6 +38,11 @@ function arrastrar(ev) {
     
     // convertimos el ultimo elemento en número
     let oldIdInt = Number(oldIdString);
+
+    // variable para el nuevo elemento arrastrado
+    let elNuevoElemento = '';
+    // nuevoNombreId para el botón arrastrado
+    let nuevoNombreId = '';
 
     // evaluamos el nombreId, pues nos indicará si es un botón, una caja de texto , o algún elemento funcional modelado
     if(nombreId == 'button'){
@@ -66,11 +71,11 @@ function arrastrar(ev) {
           // console.log(newIdInt);
 
           // nuevoNombreId para el botón arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-          let nuevoNombreId = nombreId+newIdInt;
+          nuevoNombreId = nombreId+newIdInt;
           // console.log(nuevoNombreId);
 
           // Buscamos el elemento recien arrastrado
-          let elNuevoElemento = document.getElementById(idAnterior);
+          elNuevoElemento = document.getElementById(idAnterior);
           // console.log('elNuevoElemento', elNuevoElemento);
 
           // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del botón de base
@@ -80,14 +85,14 @@ function arrastrar(ev) {
           // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
 
           arrBotones.push(nuevoNombreId);
-          console.log(arrBotones);
+          // console.log(arrBotones);
+          
 
 
           // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
           // si el ultimo elemento es cero, significa que es la primera vez que se arrastra de la sección de controles
           // regeneramos el elemento base si es la primera vez que se arrastra
           regenerarElementoBase(idAnterior);
-
 
 
 
@@ -126,11 +131,11 @@ function arrastrar(ev) {
             // console.log(newIdInt);
   
             // nuevoNombreId para el texto arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-            let nuevoNombreId = nombreId+newIdInt;
+            nuevoNombreId = nombreId+newIdInt;
             // console.log(nuevoNombreId);
   
             // Buscamos el elemento recien arrastrado
-            let elNuevoElemento = document.getElementById(idAnterior);
+            elNuevoElemento = document.getElementById(idAnterior);
             // console.log('elNuevoElemento', elNuevoElemento);
   
             // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del texto de base
@@ -139,7 +144,7 @@ function arrastrar(ev) {
   
             // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
             arrTexto.push(nuevoNombreId);
-            console.log(arrTexto);
+            // console.log(arrTexto);
 
   
             // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
@@ -183,11 +188,11 @@ function arrastrar(ev) {
               // console.log(newIdInt);
     
               // nuevoNombreId para el radio arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-              let nuevoNombreId = nombreId+newIdInt;
+              nuevoNombreId = nombreId+newIdInt;
               // console.log(nuevoNombreId);
     
               // Buscamos el elemento recien arrastrado
-              let elNuevoElemento = document.getElementById(idAnterior);
+              elNuevoElemento = document.getElementById(idAnterior);
               // console.log('elNuevoElemento', elNuevoElemento);
     
               // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del radio de base
@@ -196,7 +201,7 @@ function arrastrar(ev) {
     
               // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
               arrRadio.push(nuevoNombreId);
-              console.log(arrRadio);
+              // console.log(arrRadio);
   
     
               // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
@@ -240,11 +245,11 @@ function arrastrar(ev) {
                 // console.log(newIdInt);
       
                 // nuevoNombreId para el label arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-                let nuevoNombreId = nombreId+newIdInt;
+                nuevoNombreId = nombreId+newIdInt;
                 // console.log(nuevoNombreId);
       
                 // Buscamos el elemento recien arrastrado
-                let elNuevoElemento = document.getElementById(idAnterior);
+                elNuevoElemento = document.getElementById(idAnterior);
                 // console.log('elNuevoElemento', elNuevoElemento);
       
                 // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del label de base
@@ -253,7 +258,7 @@ function arrastrar(ev) {
       
                 // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
                 arrLabel.push(nuevoNombreId);
-                console.log(arrLabel);
+                // console.log(arrLabel);
     
       
                 // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
@@ -298,11 +303,11 @@ function arrastrar(ev) {
                   // console.log(newIdInt);
         
                   // nuevoNombreId para el checkbox arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-                  let nuevoNombreId = nombreId+newIdInt;
+                  nuevoNombreId = nombreId+newIdInt;
                   // console.log(nuevoNombreId);
         
                   // Buscamos el elemento recien arrastrado
-                  let elNuevoElemento = document.getElementById(idAnterior);
+                  elNuevoElemento = document.getElementById(idAnterior);
                   // console.log('elNuevoElemento', elNuevoElemento);
         
                   // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del checkbox de base
@@ -311,7 +316,7 @@ function arrastrar(ev) {
         
                   // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
                   arrCheckbox.push(nuevoNombreId);
-                  console.log(arrCheckbox);
+                  // console.log(arrCheckbox);
       
         
                   // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
@@ -354,11 +359,11 @@ function arrastrar(ev) {
                     // console.log(newIdInt);
           
                     // nuevoNombreId para el submit arrastrado, que será el nombre anterior sin número concatenado con el nuevo número generado
-                    let nuevoNombreId = nombreId+newIdInt;
+                    nuevoNombreId = nombreId+newIdInt;
                     // console.log(nuevoNombreId);
           
                     // Buscamos el elemento recien arrastrado
-                    let elNuevoElemento = document.getElementById(idAnterior);
+                    elNuevoElemento = document.getElementById(idAnterior);
                     // console.log('elNuevoElemento', elNuevoElemento);
           
                     // le cambiamos el id por el nuevo id generado, es decir, el número incrementado en uno para diferenciarlo del submit de base
@@ -368,7 +373,7 @@ function arrastrar(ev) {
                     // registramos el nuevo nombre del elemento en el arreglo global de elementos correspondiente
           
                     arrSubmit.push(nuevoNombreId);
-                    console.log(arrSubmit);
+                    // console.log(arrSubmit);
           
           
                     // El orden para regenerar el elemento importa. Si regenero primero antes de cambiar el id del elemento recién arrastrado, se identificará en el DOM el elemento recién generado en la sección de controles
@@ -387,12 +392,18 @@ function arrastrar(ev) {
           
               }// fin if submit
 
+      // si no es un nuevo elemento (oldInt==0) no enviamos invocamos a enviarCodigoHTML
+      if(oldIdInt==0){
+          // invocamos al método que enviará el código HTML del nuevo elemento a la sección de código, junto con su id
+          enviarCodigoHTML(elNuevoElemento,nuevoNombreId, idDivDestino );
+        }
+
 
   }// fin function
 
 
   function EliminarDelArreglo(elementoAeliminar){
-    console.log('Eliminar del Arreglo',elementoAeliminar);
+    // console.log('Eliminar del Arreglo',elementoAeliminar);
 
  
     // extraemos el nombre del id sin contar el número
@@ -413,7 +424,7 @@ function arrastrar(ev) {
       // eliminamos el elemento del arreglo, con el índice identificado
       arrBotones.splice(indiceAEliminar, 1);
       //mostramos el arreglo después de la eliminación
-      console.log(arrBotones);
+      // console.log(arrBotones);
 
 
 
@@ -428,7 +439,7 @@ function arrastrar(ev) {
       // eliminamos el elemento del arreglo, con el índice identificado
       arrTexto.splice(indiceAEliminar, 1);
       //mostramos el arreglo después de la eliminación
-      console.log(arrTexto);
+      // console.log(arrTexto);
   
   
   
@@ -443,7 +454,7 @@ function arrastrar(ev) {
        // eliminamos el elemento del arreglo, con el índice identificado
        arrRadio.splice(indiceAEliminar, 1);
        //mostramos el arreglo después de la eliminación
-       console.log(arrRadio);
+       // console.log(arrRadio);
     
     
     
@@ -457,7 +468,7 @@ function arrastrar(ev) {
       // eliminamos el elemento del arreglo, con el índice identificado
       arrLabel.splice(indiceAEliminar, 1);
       //mostramos el arreglo después de la eliminación
-      console.log(arrLabel);
+      // console.log(arrLabel);
       
       
     
@@ -472,7 +483,7 @@ function arrastrar(ev) {
       // eliminamos el elemento del arreglo, con el índice identificado
       arrCheckbox.splice(indiceAEliminar, 1);
       //mostramos el arreglo después de la eliminación
-      console.log(arrCheckbox);
+      // console.log(arrCheckbox);
 
         
         
@@ -486,7 +497,7 @@ function arrastrar(ev) {
       // eliminamos el elemento del arreglo, con el índice identificado
       arrSubmit.splice(indiceAEliminar, 1);
       //mostramos el arreglo después de la eliminación
-      console.log(arrSubmit);
+      // console.log(arrSubmit);
           
               }// fin if submit
 
@@ -628,18 +639,100 @@ function arrastrar(ev) {
 
   }
 
+
+  function resaltarCajaCodigo(){
+    // hacemos que el elemento que invoca la función (this) cambie su estilo
+    this.style.backgroundColor = 'lightblue';
+  }
+
+  function noResaltarCajaCodigo(){
+    // hacemos que el elemento que invoca la función (this) cambie su estilo
+    this.style.backgroundColor = 'white';
+  }
+
+  function cambiarElemento(idDivAEditar, idCajaEdita){
+    console.log('el id div a editar: ', idDivAEditar);
+    console.log('el id caja que edita: ', idCajaEdita);
+    // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor)
+    let elElementoAEditar  = document.getElementById(idDivAEditar);
+    // buscamos en el dom la caja que esta editando el documento
+    let laCajaQueEdita = document.getElementById(idCajaEdita);
+    console.log('la caja que edita: ',laCajaQueEdita);
+    console.log('valor la caja que edita: ',laCajaQueEdita.value);
+    // cambiamos el contenido del elemento a editar (divDestino) por el valor que contenga la caja que edita
+    console.log('el elemento a editar: ', elElementoAEditar);
+    elElementoAEditar.innerHTML =laCajaQueEdita.value;
+
+
+
+
+  }
+
+
+  // la funcion recibe el elemento que será editado, y su id, y el id del Div destino para modificarle su innerHTML
+  function enviarCodigoHTML(elemento, id, idDivDestino){
+
+    // console.log(elemento);
+    // console.log(typeof elemento);
+    // Extraemos el HTML del elemento arrastrado con la propiedad outerHTML y la convertimos en String
+    let htmlExtraido = String(elemento.outerHTML);
+    console.log('htmlExtraido',htmlExtraido);
+    // ubicamos la caja de código en el DOM
+    let laCajaDeCodigo = document.getElementById('cajaDeCodigo');
+
+    // creamos una nueva caja de texto que poseerá el código recién creado
+    let nuevaCajaTexto = document.createElement('input');
+    // establecemos los atributos de la nueva caja de texto indicando que es de tipo texto
+    nuevaCajaTexto.setAttribute('type', 'text');
+    // establecemos los atributos de la nueva caja de texto para que tengan un tamaño definido de 40 caracteres
+    nuevaCajaTexto.setAttribute('size', '40');
+    // establecemos los atributos de la nueva caja de texto para que no tengan bordes aplicando una clase personalizda
+    nuevaCajaTexto.setAttribute('class', 'sin-bordes');
+    // generamos un id sintetico para la caja, de manera que se pueda ubicar en el DOM
+    let idSinteticoCajaEdicion = 'editar'+id;
+    // asignamos el id sintetico a la nueva caja generada
+    nuevaCajaTexto.id = idSinteticoCajaEdicion;
+    // le asignamos un event listener para que resalte con un color azul claro la caja que se esta editando
+    nuevaCajaTexto.addEventListener('mouseover', resaltarCajaCodigo );
+    // le asignamos un event listener para que deje de resaltar la caja que se esta editando cuando se salga del foco
+    nuevaCajaTexto.addEventListener('mouseout', noResaltarCajaCodigo );
+    // hacemos que todas las cajas de texto reaccionen al evento onkeyup, es decir que reaccione cuando se escriba en las cajas pasando como argumentos el id del elemento que se va a editar y el id de la caja que edita
+    // cuando se requiere llamar una función de callback con parámetros, se llama una función anonima que internamente llama a la función de callback con parámetros
+    nuevaCajaTexto.addEventListener('keyup',function() { cambiarElemento(idDivDestino, idSinteticoCajaEdicion);} );
+
+    //asignamos como valor en la caja de código el html extraido
+    nuevaCajaTexto.value = htmlExtraido;
+
+    // añadimos a la cjaa de codigo  el nuevo elemento recién creado 
+    laCajaDeCodigo.appendChild(nuevaCajaTexto);
+
+  }
+
   function soltar(ev) {
-    // console.log(ev);
+    console.log(ev);
     // console.log(ev.srcElement.firstElementChild.outerHTML);
     // console.log(ev.srcElement.lastChild);
     ev.preventDefault();
-    // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
-    var data = ev.dataTransfer.getData("text");
-    // console.log(data);
-    // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
-    ev.target.appendChild(document.getElementById(data));
-    // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
-    generarNuevoId(data);
+    // borramos el borde de ubicación cuando se suelte el elemento
+    this.style.borderStyle = 'none';
+    try{
+      // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
+        var data = ev.dataTransfer.getData("text");
+        // identificamos el destino (target), especificamente su id
+        var idDivDestino = ev.target.id;
+        // console.log(idDivDestino);
+        // console.log(data);
+        // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
+        ev.target.appendChild(document.getElementById(data));
+
+        
+        // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
+        generarNuevoId(data, idDivDestino);
+    }
+    catch(error){
+      console.log('error en la función arrastrar atrapado: ',error); // pasa el objeto de la excepción al manejador de errores
+    }
+ 
 
 
   }
@@ -664,24 +757,31 @@ function arrastrar(ev) {
   }
 
   
-  /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout
+
 
   function dentroContenedor(){
     // cambiar las clases de bootstrap causa que los elementos se oculten en los div
     // this.classList.remove('bg-warning');
     // this.classList.add('bg-success');
+    // this.style.backgroundColor = 'lightBlue';
 
-   this.style.backgroundColor = 'lightBlue';
+    // mostramos borde punteado cuando se posiciona el elemento arrastrado sobre un div del grid system
+    this.style.borderStyle = 'dotted';
+
+
   }
 
   function fueraContenedor(){
     // cambiar las clases de bootstrap causa que los elementos se oculten en los div
     // this.classList.remove('bg-success');
     // this.classList.add('bg-warning');
+    // this.style.backgroundColor = 'yellow';
 
-    this.style.backgroundColor = 'yellow';
+    // borramos el borde punteado después de salir del div del gri system
+    this.style.borderStyle = 'none';
+
   }
-  */
+
 
   function asignarEventos(){
         // buscamos el contenedor de controles para permitir eliminar elementos que regresen de vuelta
@@ -699,10 +799,10 @@ function arrastrar(ev) {
         for(let i=0; i<arregloContenedores.length;i++){
             arregloContenedores[i].addEventListener('dragover', permitirSoltar);
             arregloContenedores[i].addEventListener('drop', soltar);
-            /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout
-            arregloContenedores[i].addEventListener('mouseover', dentroContenedor);
-            arregloContenedores[i].addEventListener('mouseout', fueraContenedor);
-            */
+            /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
+            arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
+            arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
+            
         }
         // buscamos el botón de base en el DOM
         let elBotonBase = document.getElementById('button0');
