@@ -1,6 +1,13 @@
-.contenedoresArrastraSuelta{
     /* se pueden poner bordes, pero no contribuye mucho a la visualización
+.contenedoresArrastraSuelta{
+
     border-color: burlywood;
     border-style: dotted;
-    */
+  
+}
+*/
+
+.sin-bordes{
+    border: none;
+    outline: none;
 }
