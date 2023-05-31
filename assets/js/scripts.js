@@ -782,6 +782,32 @@ function arrastrar(ev) {
 
   }
 
+  function generarLienzo12x12(){
+    // console.log(lienzo12x12);
+    // buscamos el lienzo padre en el DOM
+    let elLienzoPadre = document.getElementById('lienzoPadre');
+    // creamos el nodo de texto que se enviará al texto padre, enviando como argumento todo el diseño 12x12
+    let contenidoLienzo = document.createTextNode(lienzo12x12);
+    // enviamos al lienzo padre el textNode
+    elLienzoPadre.innerHTML = lienzo12x12;
+
+    //Asignamos lo eventos para el lienzo
+            //buscamos los doce contenedores en el DOM donde se puede arrastrar el elemento
+            let arregloContenedores = document.getElementsByClassName('contenedoresArrastraSuelta');
+            // recorremos los doce contenedores y les asignamos los eventos dragover y drop
+            // el evento dragover tendrá asociado la función de callback de permitirSoltar
+            // el evento drop tendrá asociado la función de callback de soltar
+            for(let i=0; i<arregloContenedores.length;i++){
+                arregloContenedores[i].addEventListener('dragover', permitirSoltar);
+                arregloContenedores[i].addEventListener('drop', soltar);
+                /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
+                arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
+                arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
+                
+            }
+
+  }
+
 
   function asignarEventos(){
         // buscamos el contenedor de controles para permitir eliminar elementos que regresen de vuelta
@@ -791,19 +817,6 @@ function arrastrar(ev) {
 
 
 
-        //buscamos los doce contenedores en el DOM donde se puede arrastrar el elemento
-        let arregloContenedores = document.getElementsByClassName('contenedoresArrastraSuelta');
-        // recorremos los doce contenedores y les asignamos los eventos dragover y drop
-        // el evento dragover tendrá asociado la función de callback de permitirSoltar
-        // el evento drop tendrá asociado la función de callback de soltar
-        for(let i=0; i<arregloContenedores.length;i++){
-            arregloContenedores[i].addEventListener('dragover', permitirSoltar);
-            arregloContenedores[i].addEventListener('drop', soltar);
-            /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
-            arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
-            arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
-            
-        }
         // buscamos el botón de base en el DOM
         let elBotonBase = document.getElementById('button0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
@@ -834,5 +847,531 @@ function arrastrar(ev) {
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elSubmitBase.addEventListener('dragstart', arrastrar);
 
+
+        // buscamos el boton de 12x12 
+        let elBoton12x12 = document.getElementById('btn12x12');
+        elBoton12x12.addEventListener('click', generarLienzo12x12);
+
         
   }
+
+
+
+
+  var lienzo12x12 = `
+  <!-- Contenedor de 12 columnas por 12 filas para arrastrar elementos-->
+  <div class="container">
+      <!-- fila 1-->
+      <div class="row">
+          <div id="f1c1" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f1c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c4" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      <!-- fila 2-->
+      <div class="row">
+          <div id="f2c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c2" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f2c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c4" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      <!-- fila 3-->
+      <div class="row">
+          <div id="f3c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c3" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f3c4" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      
+      <!-- fila 4-->
+      <div class="row">
+          <div id="f4c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f4c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 5-->
+      <div class="row">
+          <div id="f5c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f5c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 6-->
+      <div class="row">
+          <div id="f6c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f6c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+
+      
+      
+      <!-- fila 7-->
+      <div class="row">
+          <div id="f7c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c3"  class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f7c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 8-->
+      <div class="row">
+          <div id="f8c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f8c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+
+      
+      
+      <!-- fila 9-->
+      <div class="row">
+          <div id="f9c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f9c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c19" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+
+      
+      
+      <!-- fila 10-->
+      <div class="row">
+          <div id="f10c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f10c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 11-->
+      <div class="row">
+          <div id="f11c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f11c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 12-->
+      <div class="row">
+          <div id="f12c1" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c2" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c3" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c4" class="col-md-1 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f12c5" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c6" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c7" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c8" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c9" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c10" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c11" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+
+  </div><!-- fin container-->
+  
+  `;
