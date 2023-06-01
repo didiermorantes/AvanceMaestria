@@ -791,7 +791,8 @@ function arrastrar(ev) {
     // enviamos al lienzo padre el textNode
     elLienzoPadre.innerHTML = lienzo12x12;
 
-    //Asignamos lo eventos para el lienzo
+    //Asignamos los eventos para el lienzo, de manera que se pueda arrastrar y soltar sobre ellos
+    // Se debe realizar dentro de este método, porque si lo hacemos en el onload, al no existir los elementos, no se asignará nada y no servirán para arrastrar y soltar
             //buscamos los doce contenedores en el DOM donde se puede arrastrar el elemento
             let arregloContenedores = document.getElementsByClassName('contenedoresArrastraSuelta');
             // recorremos los doce contenedores y les asignamos los eventos dragover y drop
