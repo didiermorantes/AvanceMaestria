@@ -11,12 +11,26 @@ var arrCheckbox = ['checkbox0'];
 // arreglo global para llevar registro de submit
 var arrSubmit = ['submit0'];
 
+
 function arrastrar(ev) {
+  
     // identificamos el id del elemento que está siendo arrastrado
     // El método DataTransfer.setData() establece los datos de arrastre de la operación de arrastre en el tipo y datos especificados
     // Se agrega el id del elemento arrastrado al objeto DataTransfer
-    // El objeto DataTransfer se utiliza para contener los datos que se arrastran durante una operación de arrastrar y soltar
-    ev.dataTransfer.setData("text/plain", ev.target.id);
+    
+    // decidimos si el evento es arrastrar o por touch
+    if(ev.type=='touchmove'){
+      // console.log(ev);
+      // no existe la propiedad dataTransfer en los eventos touch
+      // extraemos los datos directamente de target
+      console.log(ev.target.id);
+    }
+    else if(ev.type == 'dragstart'){
+      // El objeto DataTransfer se utiliza para contener los datos que se arrastran durante una operación de arrastrar y soltar
+      ev.dataTransfer.setData("text/plain", ev.target.id);
+    }
+    
+
     // console.log(ev.target.id);
     // console.log(ev.dataTransfer);
   }
@@ -504,6 +518,24 @@ function arrastrar(ev) {
   }// fin function
 
 
+  
+  function EliminarDeLaCajaCodigo(elementoAeliminar){
+    console.log('Eliminar del Arreglo',elementoAeliminar);
+    // identificamos la caja de código
+
+    // ubicamos la caja de código en el DOM
+    let laCajaDeCodigo = document.getElementById('cajaDeCodigo');
+    // construimos el id del elemento a eliminar anteponiendole la palabra editar al parámetro recibido
+    let idElementoAEliminar = 'editar'+ elementoAeliminar;
+    // identificamos el elemento a eliminar mediante el id construido
+    let elElementoAEliminar = document.getElementById(idElementoAEliminar);
+    // removemos de la caja de código el elemento hijo identificado con el id recien configurado
+    laCajaDeCodigo.removeChild(elElementoAEliminar);
+
+  }// fin function
+
+
+
 
   function regenerarElementoBase(idAnterior){
 
@@ -522,6 +554,8 @@ function arrastrar(ev) {
     elElementoBase.setAttribute('draggable', 'true');
     // asignamos al nuevo elemento el eventListener dragstart
     elElementoBase.addEventListener('dragstart', arrastrar);
+    // asignamos al nuevo elemento el eventListener touchmove para visualizacion mobile
+    elElementoBase.addEventListener('touchmove', arrastrar);
 
     // le agregamos un cero al nombre del elemento base para indicar que es el primero
     elElementoBase.id=nombreId+0;
@@ -538,10 +572,14 @@ function arrastrar(ev) {
       let elElementoBase = document.createElement('input');
       // asignamos al nuevo elemento un tipo texto
       elElementoBase.setAttribute('type', 'text');
+      // asignamos al nuevo elemento un tipo texto
+      elElementoBase.setAttribute('size', '8');
       // asignamos al nuevo elemento la propiedad draggable en true
       elElementoBase.setAttribute('draggable', 'true');
       // asignamos al nuevo elemento el eventListener dragstart
       elElementoBase.addEventListener('dragstart', arrastrar);
+      // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+      elElementoBase.addEventListener('touchmove', arrastrar);
   
       // le agregamos un cero al nombre del elemento base para indicar que es el primero
       elElementoBase.id=nombreId+0;
@@ -563,7 +601,9 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
-    
+         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+         elElementoBase.addEventListener('touchmove', arrastrar);
+
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         elElementoBase.id=nombreId+0;
         // le asignamos al nuevo elemento el valor radio
@@ -580,6 +620,9 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elElementoBase.addEventListener('touchmove', arrastrar);
+
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         elElementoBase.id=nombreId+0;
@@ -602,6 +645,8 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elElementoBase.addEventListener('touchmove', arrastrar);
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         let newId = nombreId+0;
@@ -626,6 +671,9 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elElementoBase.addEventListener('touchmove', arrastrar)
+
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         elElementoBase.id=nombreId+0;
@@ -651,16 +699,24 @@ function arrastrar(ev) {
   }
 
   function cambiarElemento(idDivAEditar, idCajaEdita){
-    console.log('el id div a editar: ', idDivAEditar);
-    console.log('el id caja que edita: ', idCajaEdita);
+    // console.log('el id div a editar: ', idDivAEditar);
+    // console.log('el id caja que edita: ', idCajaEdita);
+
     // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor)
     let elElementoAEditar  = document.getElementById(idDivAEditar);
+
+    // el evento dragstart tendrá asociado la función de callback de arrastrar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
+    elElementoAEditar.addEventListener('dragstart', arrastrar);
+    // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+    elElementoAEditar.addEventListener('touchmove', arrastrar);
+    
     // buscamos en el dom la caja que esta editando el documento
     let laCajaQueEdita = document.getElementById(idCajaEdita);
-    console.log('la caja que edita: ',laCajaQueEdita);
-    console.log('valor la caja que edita: ',laCajaQueEdita.value);
+    // console.log('la caja que edita: ',laCajaQueEdita);
+    // console.log('valor la caja que edita: ',laCajaQueEdita.value);
+    // console.log('el elemento a editar: ', elElementoAEditar); 
+    
     // cambiamos el contenido del elemento a editar (divDestino) por el valor que contenga la caja que edita
-    console.log('el elemento a editar: ', elElementoAEditar);
     elElementoAEditar.innerHTML =laCajaQueEdita.value;
 
 
@@ -676,16 +732,29 @@ function arrastrar(ev) {
     // console.log(typeof elemento);
     // Extraemos el HTML del elemento arrastrado con la propiedad outerHTML y la convertimos en String
     let htmlExtraido = String(elemento.outerHTML);
-    console.log('htmlExtraido',htmlExtraido);
+    // console.log('htmlExtraido',htmlExtraido);
+
     // ubicamos la caja de código en el DOM
     let laCajaDeCodigo = document.getElementById('cajaDeCodigo');
+
+    // identificamos el ancho de la pantalla para determinar el size de la caja que se usará para escribir código pensando en móviles
+    let anchoPantalla = window.innerWidth;
+    let sizeCajaCodigo = '';
+    if(anchoPantalla <= 768){
+      // es pantalla pequeña
+      sizeCajaCodigo = '30';
+    }
+    else{
+      // es pantalla grande
+      sizeCajaCodigo = '40';
+    }
 
     // creamos una nueva caja de texto que poseerá el código recién creado
     let nuevaCajaTexto = document.createElement('input');
     // establecemos los atributos de la nueva caja de texto indicando que es de tipo texto
     nuevaCajaTexto.setAttribute('type', 'text');
     // establecemos los atributos de la nueva caja de texto para que tengan un tamaño definido de 40 caracteres
-    nuevaCajaTexto.setAttribute('size', '40');
+    nuevaCajaTexto.setAttribute('size', sizeCajaCodigo);
     // establecemos los atributos de la nueva caja de texto para que no tengan bordes aplicando una clase personalizda
     nuevaCajaTexto.setAttribute('class', 'sin-bordes');
     // generamos un id sintetico para la caja, de manera que se pueda ubicar en el DOM
@@ -703,13 +772,13 @@ function arrastrar(ev) {
     //asignamos como valor en la caja de código el html extraido
     nuevaCajaTexto.value = htmlExtraido;
 
-    // añadimos a la cjaa de codigo  el nuevo elemento recién creado 
+    // añadimos a la caja de codigo  el nuevo elemento recién creado 
     laCajaDeCodigo.appendChild(nuevaCajaTexto);
 
   }
 
   function soltar(ev) {
-    console.log(ev);
+    // console.log(ev);
     // console.log(ev.srcElement.firstElementChild.outerHTML);
     // console.log(ev.srcElement.lastChild);
     ev.preventDefault();
@@ -753,6 +822,9 @@ function arrastrar(ev) {
     //eliminamos del arreglo correspondiente el elemento arrastrado
     EliminarDelArreglo(data);
 
+    //eliminamos de la caja de codigo el elemento arrastrado
+    EliminarDeLaCajaCodigo(data);
+
 
   }
 
@@ -782,14 +854,101 @@ function arrastrar(ev) {
 
   }
 
+  function borrarTodosLosArreglos(){
+    // Establecemos todos los arreglos componentes con sus valores iniciales 
+    // arreglo global para llevar registro de botones
+    arrBotones = ['button0'];
+    // arreglo global para llevar registro de cajas de texto
+    arrTexto = ['text0'];
+    // arreglo global para llevar registro de radio botones
+    arrRadio = ['radio0'];
+    // arreglo global para llevar registro de labels
+    arrLabel = ['label0'];
+    // arreglo global para llevar registro de checkbox
+    arrCheckbox = ['checkbox0'];
+    // arreglo global para llevar registro de submit
+    arrSubmit = ['submit0'];
+
+    // borramos la caja de código para recibir nuevos elementos
+    // ubicamos la caja de código en el DOM
+    let laCajaDeCodigo = document.getElementById('cajaDeCodigo');
+    laCajaDeCodigo.innerText = '';
+
+  }
+
   function generarLienzo12x12(){
     // console.log(lienzo12x12);
+
+    // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    borrarTodosLosArreglos();
+
     // buscamos el lienzo padre en el DOM
     let elLienzoPadre = document.getElementById('lienzoPadre');
-    // creamos el nodo de texto que se enviará al texto padre, enviando como argumento todo el diseño 12x12
-    let contenidoLienzo = document.createTextNode(lienzo12x12);
-    // enviamos al lienzo padre el textNode
+
+    // enviamos al lienzo padre la variable global con el html del lienzo 12x12
     elLienzoPadre.innerHTML = lienzo12x12;
+
+    //Asignamos los eventos para el lienzo, de manera que se pueda arrastrar y soltar sobre ellos
+    // Se debe realizar dentro de este método, porque si lo hacemos en el onload, al no existir los elementos, no se asignará nada y no servirán para arrastrar y soltar
+            //buscamos los doce contenedores en el DOM donde se puede arrastrar el elemento
+            let arregloContenedores = document.getElementsByClassName('contenedoresArrastraSuelta');
+            // recorremos los doce contenedores y les asignamos los eventos dragover y drop
+            // el evento dragover tendrá asociado la función de callback de permitirSoltar
+            // el evento drop tendrá asociado la función de callback de soltar
+            for(let i=0; i<arregloContenedores.length;i++){
+                arregloContenedores[i].addEventListener('dragover', permitirSoltar);
+                arregloContenedores[i].addEventListener('drop', soltar);
+                /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
+                arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
+                arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
+                
+            }
+
+  }
+
+
+  function generarLienzo2x12(){
+    // console.log(lienzo2x12);
+
+    // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    borrarTodosLosArreglos();
+
+    // buscamos el lienzo padre en el DOM
+    let elLienzoPadre = document.getElementById('lienzoPadre');
+    // enviamos al lienzo padre la variable global con el html del lienzo 2x12de
+    elLienzoPadre.innerHTML = lienzo2x12;
+
+    //Asignamos los eventos para el lienzo, de manera que se pueda arrastrar y soltar sobre ellos
+    // Se debe realizar dentro de este método, porque si lo hacemos en el onload, al no existir los elementos, no se asignará nada y no servirán para arrastrar y soltar
+            //buscamos los doce contenedores en el DOM donde se puede arrastrar el elemento
+            let arregloContenedores = document.getElementsByClassName('contenedoresArrastraSuelta');
+            // recorremos los doce contenedores y les asignamos los eventos dragover y drop
+            // el evento dragover tendrá asociado la función de callback de permitirSoltar
+            // el evento drop tendrá asociado la función de callback de soltar
+            for(let i=0; i<arregloContenedores.length;i++){
+                arregloContenedores[i].addEventListener('dragover', permitirSoltar);
+                arregloContenedores[i].addEventListener('drop', soltar);
+                /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
+                arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
+                arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
+                
+            }
+
+  }
+
+
+  
+
+  function generarLienzo3x12(){
+    // console.log(lienzo3x12);
+
+    // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    borrarTodosLosArreglos();
+
+    // buscamos el lienzo padre en el DOM
+    let elLienzoPadre = document.getElementById('lienzoPadre');
+    // enviamos al lienzo padre la variable global con el html del lienzo 2x12de
+    elLienzoPadre.innerHTML = lienzo3x12;
 
     //Asignamos los eventos para el lienzo, de manera que se pueda arrastrar y soltar sobre ellos
     // Se debe realizar dentro de este método, porque si lo hacemos en el onload, al no existir los elementos, no se asignará nada y no servirán para arrastrar y soltar
@@ -822,36 +981,57 @@ function arrastrar(ev) {
         let elBotonBase = document.getElementById('button0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elBotonBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elBotonBase.addEventListener('touchmove', arrastrar);
 
         // buscamos la caja de texto de base en el DOM
         let elTextoBase = document.getElementById('text0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elTextoBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elTextoBase.addEventListener('touchmove', arrastrar);
+
 
         // buscamos el radio boton de base en el DOM
         let elRadioBase = document.getElementById('radio0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elRadioBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elRadioBase.addEventListener('touchmove', arrastrar);
 
         // buscamos el label de base en el DOM
         let elLabelBase = document.getElementById('label0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elLabelBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elLabelBase.addEventListener('touchmove', arrastrar);
 
         // buscamos el checkbox de base en el DOM
         let elCheckBase = document.getElementById('checkbox0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elCheckBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elCheckBase.addEventListener('touchmove', arrastrar);
 
         // buscamos el submit de base en el DOM
         let elSubmitBase = document.getElementById('submit0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elSubmitBase.addEventListener('dragstart', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
+        elSubmitBase.addEventListener('touchmove', arrastrar);
 
 
         // buscamos el boton de 12x12 
         let elBoton12x12 = document.getElementById('btn12x12');
         elBoton12x12.addEventListener('click', generarLienzo12x12);
+
+        // buscamos el boton de 2x12 
+        let elBoton2x12 = document.getElementById('btn2x12');
+        elBoton2x12.addEventListener('click', generarLienzo2x12);
+
+        // buscamos el boton de 3x12 
+        let elBoton3x12 = document.getElementById('btn3x12');
+        elBoton3x12.addEventListener('click', generarLienzo3x12);
 
         
   }
@@ -907,7 +1087,7 @@ function arrastrar(ev) {
           <div id="f2c1" class="col-md-1 contenedoresArrastraSuelta">
               
           </div>
-          <div id="f1c2" class="col-md-1 contenedoresArrastraSuelta">
+          <div id="f2c2" class="col-md-1 contenedoresArrastraSuelta">
               &nbsp;
           </div>
           <div id="f2c3" class="col-md-1 contenedoresArrastraSuelta">
@@ -1366,6 +1546,377 @@ function arrastrar(ev) {
               
           </div>
           <div id="f12c12" class="col-md-1 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+
+  </div><!-- fin container-->
+  
+  `;
+
+
+  
+  var lienzo2x12 = `
+  <!-- Contenedor de 2 columnas por 12 filas para arrastrar elementos-->
+  <div class="container">
+      <!-- fila 1-->
+      <div class="row">
+          <div id="f1c1" class="col-md-6 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f1c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+      <!-- fila 2-->
+      <div class="row">
+          <div id="f2c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c2" class="col-md-6 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+      </div>
+
+      <!-- fila 3-->
+      <div class="row">
+          <div id="f3c1" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f3c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      
+      <!-- fila 4-->
+      <div class="row">
+          <div id="f4c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c2" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 5-->
+      <div class="row">
+          <div id="f5c1" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f5c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+      
+      
+      <!-- fila 6-->
+      <div class="row">
+          <div id="f6c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c2" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 7-->
+      <div class="row">
+          <div id="f7c1" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f7c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+      
+      
+      <!-- fila 8-->
+      <div class="row">
+          <div id="f8c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c2" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 9-->
+      <div class="row">
+          <div id="f9c1" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp; 
+          </div>
+          <div id="f9c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 10-->
+      <div class="row">
+          <div id="f10c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c2" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+
+      </div>
+
+
+      
+      
+      <!-- fila 11-->
+      <div class="row">
+          <div id="f11c1" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f11c2" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+ 
+      </div>
+
+
+      
+      
+      <!-- fila 12-->
+      <div class="row">
+          <div id="f12c1" class="col-md-6 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c2" class="col-md-6 contenedoresArrastraSuelta">
+            &nbsp; 
+          </div>
+
+      </div>
+
+
+      
+
+  </div><!-- fin container-->
+  
+  `;
+
+
+  var lienzo3x12 = `
+  <!-- Contenedor de 3 columnas por 12 filas para arrastrar elementos-->
+  <div class="container">
+      <!-- fila 1-->
+      <div class="row">
+          <div id="f1c1" class="col-md-4 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f1c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f1c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+      <!-- fila 2-->
+      <div class="row">
+          <div id="f2c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f2c2" class="col-md-4 contenedoresArrastraSuelta">
+              &nbsp;
+          </div>
+          <div id="f2c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      <!-- fila 3-->
+      <div class="row">
+          <div id="f3c1" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f3c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f3c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+      
+      <!-- fila 4-->
+      <div class="row">
+          <div id="f4c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f4c2" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f4c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+      </div>
+
+
+      
+      
+      <!-- fila 5-->
+      <div class="row">
+          <div id="f5c1" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f5c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f5c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+      
+      
+      <!-- fila 6-->
+      <div class="row">
+          <div id="f6c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f6c2" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f6c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 7-->
+      <div class="row">
+          <div id="f7c1" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f7c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f7c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+      
+      
+      <!-- fila 8-->
+      <div class="row">
+          <div id="f8c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f8c2" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f8c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 9-->
+      <div class="row">
+          <div id="f9c1" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp; 
+          </div>
+          <div id="f9c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f9c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+
+      </div>
+
+
+
+      
+      
+      <!-- fila 10-->
+      <div class="row">
+          <div id="f10c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f10c2" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f10c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>         
+
+      </div>
+
+
+      
+      
+      <!-- fila 11-->
+      <div class="row">
+          <div id="f11c1" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp;
+          </div>
+          <div id="f11c2" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f11c3" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div> 
+      </div>
+
+
+      
+      
+      <!-- fila 12-->
+      <div class="row">
+          <div id="f12c1" class="col-md-4 contenedoresArrastraSuelta">
+              
+          </div>
+          <div id="f12c2" class="col-md-4 contenedoresArrastraSuelta">
+            &nbsp; 
+          </div>
+          <div id="f12c3" class="col-md-4 contenedoresArrastraSuelta">
               
           </div>
       </div>
