@@ -406,10 +406,15 @@ function arrastrar(ev) {
           
               }// fin if submit
 
-      // si no es un nuevo elemento (oldInt==0) no enviamos invocamos a enviarCodigoHTML
+      // si no es un nuevo elemento (oldInt==0) no enviamos nada. No invocamos a enviarCodigoHTML
       if(oldIdInt==0){
           // invocamos al método que enviará el código HTML del nuevo elemento a la sección de código, junto con su id
           enviarCodigoHTML(elNuevoElemento,nuevoNombreId, idDivDestino );
+        }
+        else{
+          // si el ultimo numero del id no es cero,  hay que actualizar la caja de código
+          console.log('se movio elemento. Posiblemente haya cambiado codigo en la caja de codigo');
+          // la caja de codigo mantiene la referencia del primer lugar donde se movio y se comenzo a editar codigo
         }
 
 
@@ -520,7 +525,7 @@ function arrastrar(ev) {
 
   
   function EliminarDeLaCajaCodigo(elementoAeliminar){
-    console.log('Eliminar del Arreglo',elementoAeliminar);
+    // console.log('Eliminar del Arreglo',elementoAeliminar);
     // identificamos la caja de código
 
     // ubicamos la caja de código en el DOM
@@ -785,12 +790,14 @@ function arrastrar(ev) {
     // borramos el borde de ubicación cuando se suelte el elemento
     this.style.borderStyle = 'none';
     try{
-      // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
+        // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
+        // data es el elemento que está siendo arrastrado
         var data = ev.dataTransfer.getData("text");
         // identificamos el destino (target), especificamente su id
         var idDivDestino = ev.target.id;
         // console.log(idDivDestino);
         // console.log(data);
+        console.log('ev.target',ev.target);
         // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
         ev.target.appendChild(document.getElementById(data));
 
@@ -815,15 +822,27 @@ function arrastrar(ev) {
     // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para eliminarlo del DOM
     var data = ev.dataTransfer.getData("text");
     // console.log(data);
-    // eliminamos(remove) del source(origen) el elemento identificado mediante su id y referenciado en la variable data
-    let elElementoAeliminar = document.getElementById(data);
-    elElementoAeliminar.remove();
 
-    //eliminamos del arreglo correspondiente el elemento arrastrado
-    EliminarDelArreglo(data);
 
-    //eliminamos de la caja de codigo el elemento arrastrado
-    EliminarDeLaCajaCodigo(data);
+    // extraemos el ultimo elemento del idAnterior, pues viene en formato letraNumero
+    let oldIdString = data.slice(-1);
+    
+    // si el ultimo elemento del id es diferente de cero, eliminamos los elementos del lienzo, y de los arreglos
+    // de lo contrario no hacemos nada, pues si el ultimo elemento del id es cero, significa que es el elemento de base
+    // y no queremos eliminar el elemento de base
+    if(oldIdString != 0){
+
+      let elElementoAeliminar = document.getElementById(data);
+      // eliminamos(remove) del source(origen) el elemento identificado mediante su id y referenciado en la variable data
+      elElementoAeliminar.remove();
+      
+      //eliminamos del arreglo correspondiente el elemento arrastrado
+      EliminarDelArreglo(data);
+  
+      //eliminamos de la caja de codigo el elemento arrastrado
+      EliminarDeLaCajaCodigo(data);
+    }
+
 
 
   }
@@ -879,6 +898,9 @@ function arrastrar(ev) {
   function generarLienzo12x12(){
     // console.log(lienzo12x12);
 
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
+
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
     borrarTodosLosArreglos();
 
@@ -909,6 +931,9 @@ function arrastrar(ev) {
 
   function generarLienzo2x12(){
     // console.log(lienzo2x12);
+
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
 
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
     borrarTodosLosArreglos();
@@ -942,6 +967,9 @@ function arrastrar(ev) {
   function generarLienzo3x12(){
     // console.log(lienzo3x12);
 
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
+
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
     borrarTodosLosArreglos();
 
@@ -967,6 +995,21 @@ function arrastrar(ev) {
             }
 
   }
+
+
+  function deshabilitarSeccionControles(){
+           // buscamos el contenedor de controles
+           let elContenedorControles = document.getElementById('contenedorControles');
+           // ocultamos la seccion de controles
+           elContenedorControles.hidden = true; 
+  }
+
+  function habilitarSeccionControles(){
+    // buscamos el contenedor de controles
+    let elContenedorControles = document.getElementById('contenedorControles');
+    // mostramos la seccion de controles
+    elContenedorControles.hidden = false; 
+}
 
 
   function asignarEventos(){
@@ -1032,6 +1075,9 @@ function arrastrar(ev) {
         // buscamos el boton de 3x12 
         let elBoton3x12 = document.getElementById('btn3x12');
         elBoton3x12.addEventListener('click', generarLienzo3x12);
+
+        // invocamos la función de ocultar controles. No se muestran hasta que se seleccione un layout
+        deshabilitarSeccionControles();
 
         
   }
