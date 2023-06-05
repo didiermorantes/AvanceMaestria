@@ -10,6 +10,18 @@ var arrLabel = ['label0'];
 var arrCheckbox = ['checkbox0'];
 // arreglo global para llevar registro de submit
 var arrSubmit = ['submit0'];
+// variable para guardar el ultimoTargetId después de haber editado un elemento
+var ultimoTargetId = '';
+// variable para determinar limite de elementos a arrastrar
+var limiteElementos = 0;
+// variable para llevar el conteo de elementos en el lienzo
+var cantidadElementos = 0;
+// variable para guardar los elementos que se han tocado mobile
+var elementoTouch1 = '';
+// variable para guardar los elementos que se han tocado mobile
+var elementoTouch2 = '';
+// variable para llevar los conteos de toques
+var contadorTouch=0;
 
 
 function arrastrar(ev) {
@@ -23,11 +35,24 @@ function arrastrar(ev) {
       // console.log(ev);
       // no existe la propiedad dataTransfer en los eventos touch
       // extraemos los datos directamente de target
-      console.log(ev.target.id);
+      // console.log(arrastrar ev.target.id);
     }
     else if(ev.type == 'dragstart'){
       // El objeto DataTransfer se utiliza para contener los datos que se arrastran durante una operación de arrastrar y soltar
       ev.dataTransfer.setData("text/plain", ev.target.id);
+    
+    // el idAnterior que está produciendo el evento de arrastrar
+    let idAnterior = ev.target.id;
+    // console.log('arrastrar idAnterior: ', idAnterior);
+
+    // extraemos el ultimo elemento del idAnterior, pues viene en formato letraNumero
+    let oldIdString = idAnterior.slice(-1);
+    // si el número es diferente de cero, almacenamos el evento en ultimoTargetId, de lo contrario no porque fue arrastrado de la caja de controles
+      if(oldIdString != 0){
+      // almacenamos el ultimoTargetId por si editamos un elemento y queda en blanco
+      ultimoTargetId = ev.target.id;
+      }
+
     }
     
 
@@ -40,8 +65,22 @@ function arrastrar(ev) {
     // console.log(ev);
   }
 
+  function actualizarIdDivDestino(idAnterior, idDivDestino){
+    // console.log('actualizarIdDivDestino idAnterior: ', idAnterior);
+    // console.log('actualizarIdDivDestino idDivDestino: ', idDivDestino);
+    // actualizamos el span de posicion
+    let elIdSpanPosicion = 'posicion'+idAnterior;
+    let elSpanPosicion = document.getElementById(elIdSpanPosicion);
+    elSpanPosicion.innerText = idDivDestino;
+    // actualizamos la posicion de la caja de codigo
+    let elIdCajaDeCodigo = 'editar'+idAnterior;
+    let laCajaDeCodigo = document.getElementById(elIdCajaDeCodigo);
+    elSpanPosicion.innerText = idDivDestino;
+  }
+
+
   function generarNuevoId(idAnterior, idDivDestino){
-    // console.log(idAnterior);
+    // console.log('generarNuevoId: data idAnterior',idAnterior);
 
     // extraemos el nombre del id sin contar el número
     let nombreId = idAnterior.slice(0,-1);
@@ -52,6 +91,7 @@ function arrastrar(ev) {
     
     // convertimos el ultimo elemento en número
     let oldIdInt = Number(oldIdString);
+    // console.log('generarNuevoId oldIdInt: ', oldIdInt);
 
     // variable para el nuevo elemento arrastrado
     let elNuevoElemento = '';
@@ -406,10 +446,23 @@ function arrastrar(ev) {
           
               }// fin if submit
 
-      // si no es un nuevo elemento (oldInt==0) no enviamos invocamos a enviarCodigoHTML
+      // si no es un nuevo elemento (oldInt==0) no enviamos nada. No invocamos a enviarCodigoHTML
       if(oldIdInt==0){
           // invocamos al método que enviará el código HTML del nuevo elemento a la sección de código, junto con su id
           enviarCodigoHTML(elNuevoElemento,nuevoNombreId, idDivDestino );
+          // si el oldIdInt es cero, actualizamos la referencia de ultimoTargetId actualizado con el nuevoNombreId
+          ultimoTargetId = nuevoNombreId;
+          // console.log('generarNuevoId ultimoTargetId: ',ultimoTargetId);
+
+          //incrementamos en uno la cantidad de elementos
+          cantidadElementos+=1;
+          console.log('generarNuevoId cantidadElementos: ', cantidadElementos);
+        }
+        else{
+          // si el ultimo numero del id no es cero,  hay que actualizar la caja de código
+          // console.log('se movio elemento. Posiblemente haya cambiado codigo en la caja de codigo');
+          // la caja de codigo mantiene la referencia del primer lugar donde se movio y se comenzo a editar codigo
+          actualizarIdDivDestino(idAnterior, idDivDestino);
         }
 
 
@@ -520,7 +573,7 @@ function arrastrar(ev) {
 
   
   function EliminarDeLaCajaCodigo(elementoAeliminar){
-    console.log('Eliminar del Arreglo',elementoAeliminar);
+    // console.log('Eliminar del Arreglo',elementoAeliminar);
     // identificamos la caja de código
 
     // ubicamos la caja de código en el DOM
@@ -531,6 +584,13 @@ function arrastrar(ev) {
     let elElementoAEliminar = document.getElementById(idElementoAEliminar);
     // removemos de la caja de código el elemento hijo identificado con el id recien configurado
     laCajaDeCodigo.removeChild(elElementoAEliminar);
+
+    // construimos el id del elemento a eliminar anteponiendole la palabra posicion al parámetro recibido
+    let idPosicionAEliminar = 'posicion'+ elementoAeliminar;
+    // identificamos el elemento de posicion a eliminar mediante el id construido
+    let elElementoPosicionAEliminar = document.getElementById(idPosicionAEliminar);
+    // removemos de la caja de código el elemento hijo identificado con el id recien configurado
+    laCajaDeCodigo.removeChild(elElementoPosicionAEliminar);
 
   }// fin function
 
@@ -554,8 +614,8 @@ function arrastrar(ev) {
     elElementoBase.setAttribute('draggable', 'true');
     // asignamos al nuevo elemento el eventListener dragstart
     elElementoBase.addEventListener('dragstart', arrastrar);
-    // asignamos al nuevo elemento el eventListener touchmove para visualizacion mobile
-    elElementoBase.addEventListener('touchmove', arrastrar);
+    // asignamos al nuevo elemento el eventListener touchstart para visualizacion mobile
+    elElementoBase.addEventListener('touchstart', tocar);
 
     // le agregamos un cero al nombre del elemento base para indicar que es el primero
     elElementoBase.id=nombreId+0;
@@ -578,8 +638,8 @@ function arrastrar(ev) {
       elElementoBase.setAttribute('draggable', 'true');
       // asignamos al nuevo elemento el eventListener dragstart
       elElementoBase.addEventListener('dragstart', arrastrar);
-      // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-      elElementoBase.addEventListener('touchmove', arrastrar);
+      // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+      elElementoBase.addEventListener('touchstart', tocar);
   
       // le agregamos un cero al nombre del elemento base para indicar que es el primero
       elElementoBase.id=nombreId+0;
@@ -601,8 +661,8 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
-         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-         elElementoBase.addEventListener('touchmove', arrastrar);
+         // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+         elElementoBase.addEventListener('touchstart', tocar);
 
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         elElementoBase.id=nombreId+0;
@@ -620,8 +680,8 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
-        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elElementoBase.addEventListener('touchmove', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+        elElementoBase.addEventListener('touchstart', tocar);
 
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
@@ -645,8 +705,8 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
-        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elElementoBase.addEventListener('touchmove', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+        elElementoBase.addEventListener('touchstart', tocar);
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
         let newId = nombreId+0;
@@ -671,8 +731,8 @@ function arrastrar(ev) {
         elElementoBase.setAttribute('draggable', 'true');
         // asignamos al nuevo elemento el eventListener dragstart
         elElementoBase.addEventListener('dragstart', arrastrar);
-        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elElementoBase.addEventListener('touchmove', arrastrar)
+        // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+        elElementoBase.addEventListener('touchstart', tocar)
 
     
         // le agregamos un cero al nombre del elemento base para indicar que es el primero
@@ -695,20 +755,36 @@ function arrastrar(ev) {
 
   function noResaltarCajaCodigo(){
     // hacemos que el elemento que invoca la función (this) cambie su estilo
-    this.style.backgroundColor = 'white';
+    this.style.backgroundColor = 'lightcyan';
   }
 
-  function cambiarElemento(idDivAEditar, idCajaEdita){
-    // console.log('el id div a editar: ', idDivAEditar);
+  function cambiarElemento(idDivAEditar, idCajaEdita, id){
+    // console.log('cambiarElemento el id div a editar: ', idDivAEditar);
     // console.log('el id caja que edita: ', idCajaEdita);
+    // console.log('cambiarElemento el id elemento editado: ', id);
 
-    // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor)
-    let elElementoAEditar  = document.getElementById(idDivAEditar);
 
-    // el evento dragstart tendrá asociado la función de callback de arrastrar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
-    elElementoAEditar.addEventListener('dragstart', arrastrar);
+    // obtenemos el id registrado en la caja de span de posicion
+    // actualizamos el span de posicion
+    let elIdSpanPosicion = 'posicion'+id;
+    let elSpanPosicion = document.getElementById(elIdSpanPosicion);
+    let idDivDestino = elSpanPosicion.innerText;
+
+    // creamos la variable del elemento a editar que se llenará de acuerdo con la condicion de si el div ha cambiado desde la primera vez o si se ha movido
+    let elDivElementoAEditar = '';
+    // comparamos el idDivAEditar(id original si no se ha movido la caja desde la primera vez de arrastrado) con el id que se encuentre en el span posicion idDivDestino
+    if( idDivAEditar == idDivDestino){
+    // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor) dejando el idDivAEditar original (cuando se arrastró por primera vez)
+          elDivElementoAEditar  = document.getElementById(idDivAEditar);
+    }
+    else{
+          // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor) dejando el idDivDestino (cuando se arrastró multiples veces el elemento)
+          elDivElementoAEditar  = document.getElementById(idDivDestino);
+    }
+
+
     // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-    elElementoAEditar.addEventListener('touchmove', arrastrar);
+    // elElementoAEditar.addEventListener('touchmove', arrastrar);
     
     // buscamos en el dom la caja que esta editando el documento
     let laCajaQueEdita = document.getElementById(idCajaEdita);
@@ -716,10 +792,18 @@ function arrastrar(ev) {
     // console.log('valor la caja que edita: ',laCajaQueEdita.value);
     // console.log('el elemento a editar: ', elElementoAEditar); 
     
-    // cambiamos el contenido del elemento a editar (divDestino) por el valor que contenga la caja que edita
-    elElementoAEditar.innerHTML =laCajaQueEdita.value;
+    // cambiamos el contenido del div a editar (divDestino) por el valor que contenga la caja que edita
+    elDivElementoAEditar.innerHTML =laCajaQueEdita.value;
 
+    // console.log('cambiarElemento elDivElementoAEditar: ', elDivElementoAEditar);
 
+    // ubicamos en el DOM el elemento a editar
+    let elElementoAEditar = document.getElementById(id);
+    // el evento dragstart tendrá asociado la función de callback de arrastrar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
+    elElementoAEditar.addEventListener('dragstart', arrastrar);
+    // el evento touchstart tendrá asociado la función de callback de tocar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
+    elElementoAEditar.addEventListener('touchstart', tocar);
+    // console.log(elElementoAEditar);
 
 
   }
@@ -730,6 +814,7 @@ function arrastrar(ev) {
 
     // console.log(elemento);
     // console.log(typeof elemento);
+    // console.log('enviarCodigoHTML idDivDestino:', idDivDestino);
     // Extraemos el HTML del elemento arrastrado con la propiedad outerHTML y la convertimos en String
     let htmlExtraido = String(elemento.outerHTML);
     // console.log('htmlExtraido',htmlExtraido);
@@ -749,6 +834,7 @@ function arrastrar(ev) {
       sizeCajaCodigo = '40';
     }
 
+
     // creamos una nueva caja de texto que poseerá el código recién creado
     let nuevaCajaTexto = document.createElement('input');
     // establecemos los atributos de la nueva caja de texto indicando que es de tipo texto
@@ -759,6 +845,16 @@ function arrastrar(ev) {
     nuevaCajaTexto.setAttribute('class', 'sin-bordes');
     // generamos un id sintetico para la caja, de manera que se pueda ubicar en el DOM
     let idSinteticoCajaEdicion = 'editar'+id;
+    
+    // creamos una caja de span que identifique la posición del elemento html que se está arrastrando
+    let nuevoSpanPosicion = document.createElement('span');
+    let idSinteticoSpanPosicion = 'posicion'+id;
+    // asignamos el id sintetico al nuevo parrafo generado
+    nuevoSpanPosicion.id = idSinteticoSpanPosicion;  
+    // asignamos un fontSize de 7 a la posicion
+    nuevoSpanPosicion.style.fontSize = '9px';
+    nuevoSpanPosicion.innerText = idDivDestino;   
+
     // asignamos el id sintetico a la nueva caja generada
     nuevaCajaTexto.id = idSinteticoCajaEdicion;
     // le asignamos un event listener para que resalte con un color azul claro la caja que se esta editando
@@ -767,13 +863,21 @@ function arrastrar(ev) {
     nuevaCajaTexto.addEventListener('mouseout', noResaltarCajaCodigo );
     // hacemos que todas las cajas de texto reaccionen al evento onkeyup, es decir que reaccione cuando se escriba en las cajas pasando como argumentos el id del elemento que se va a editar y el id de la caja que edita
     // cuando se requiere llamar una función de callback con parámetros, se llama una función anonima que internamente llama a la función de callback con parámetros
-    nuevaCajaTexto.addEventListener('keyup',function() { cambiarElemento(idDivDestino, idSinteticoCajaEdicion);} );
+    nuevaCajaTexto.addEventListener('keyup',function() { cambiarElemento(idDivDestino, idSinteticoCajaEdicion, id);} );
 
     //asignamos como valor en la caja de código el html extraido
     nuevaCajaTexto.value = htmlExtraido;
 
+    // creamos un nuevo salto de linea
+    let nuevoSalto = document.createElement('br');
+
+    // añadimos a la caja de codigo  el nuevo elemento recién creado de span
+    laCajaDeCodigo.appendChild(nuevoSpanPosicion);
     // añadimos a la caja de codigo  el nuevo elemento recién creado 
-    laCajaDeCodigo.appendChild(nuevaCajaTexto);
+    laCajaDeCodigo.appendChild(nuevaCajaTexto);    
+    // añadimos a la caja de código el nuevo salto de linea
+    laCajaDeCodigo.appendChild(nuevoSalto);   
+
 
   }
 
@@ -784,19 +888,53 @@ function arrastrar(ev) {
     ev.preventDefault();
     // borramos el borde de ubicación cuando se suelte el elemento
     this.style.borderStyle = 'none';
-    try{
-      // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
-        var data = ev.dataTransfer.getData("text");
-        // identificamos el destino (target), especificamente su id
-        var idDivDestino = ev.target.id;
-        // console.log(idDivDestino);
-        // console.log(data);
-        // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
-        ev.target.appendChild(document.getElementById(data));
 
-        
-        // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
-        generarNuevoId(data, idDivDestino);
+    try{
+
+      // si la cantidad de elementos es menor que el límite, se pueden seguir arrastrando más elementos
+      if(cantidadElementos < limiteElementos ){
+
+               // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
+              // data es el elemento que está siendo arrastrado
+              let data = ev.dataTransfer.getData("text");
+              // console.log('soltar data: ',data);
+              // console.log('soltar ev.target: ',ev.target);
+              // console.log('soltar ultimaTargeId: ', ultimoTargetId);
+              
+              // evaluamos si data esta vacio. Si esta vacio es porque se ha editado el elemento
+              if(data == ''){
+                // console.log('soltar data esta vacio');
+                // puede que data este vacío por haber editado el elemento, así que lo reconstruimos
+                    // El objeto DataTransfer no se puede modificar asi como en la siguiente linea
+                    // ev.dataTransfer.setData("text/plain", ev.target.id);
+                  // hacemos data igual al valor almacenado en el ultimoTargetId
+                  data = ultimoTargetId;
+                // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data, que al estar vacia, enviamos el ultimo targetId
+                  ev.target.appendChild(document.getElementById(data));
+
+              }
+              else{
+                // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
+                ev.target.appendChild(document.getElementById(data));
+              }
+              // identificamos el destino (target), especificamente su id
+              let idDivDestino = ev.target.id;
+              // console.log('soltar idDivDestino: ',idDivDestino);
+
+              
+              // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
+              generarNuevoId(data, idDivDestino);
+
+
+
+
+
+      }else{
+        // si la cantidad de elementos es mayor al limite mostramos alerta
+        alert('No puede arrastrar más elementos. Ha superado el límite');
+      }
+ 
+
     }
     catch(error){
       console.log('error en la función arrastrar atrapado: ',error); // pasa el objeto de la excepción al manejador de errores
@@ -813,17 +951,73 @@ function arrastrar(ev) {
     // console.log(ev.srcElement.lastChild);
     ev.preventDefault();
     // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para eliminarlo del DOM
-    var data = ev.dataTransfer.getData("text");
+    let data = ev.dataTransfer.getData("text");
     // console.log(data);
-    // eliminamos(remove) del source(origen) el elemento identificado mediante su id y referenciado en la variable data
-    let elElementoAeliminar = document.getElementById(data);
-    elElementoAeliminar.remove();
 
-    //eliminamos del arreglo correspondiente el elemento arrastrado
-    EliminarDelArreglo(data);
 
-    //eliminamos de la caja de codigo el elemento arrastrado
-    EliminarDeLaCajaCodigo(data);
+    // extraemos el ultimo elemento del idAnterior, pues viene en formato letraNumero
+    let oldIdString = data.slice(-1);
+    
+    // si el ultimo elemento del id es diferente de cero, eliminamos los elementos del lienzo, y de los arreglos
+    // de lo contrario no hacemos nada, pues si el ultimo elemento del id es cero, significa que es el elemento de base
+    // y no queremos eliminar el elemento de base
+    if(oldIdString != 0){
+
+      let elElementoAeliminar = document.getElementById(data);
+      // eliminamos(remove) del source(origen) el elemento identificado mediante su id y referenciado en la variable data
+      elElementoAeliminar.remove();
+      
+      //eliminamos del arreglo correspondiente el elemento arrastrado
+      EliminarDelArreglo(data);
+  
+      //eliminamos de la caja de codigo el elemento arrastrado
+      EliminarDeLaCajaCodigo(data);
+    }
+
+
+
+  }
+
+
+  function tocarParaEliminar(idElementoAEliminar) {
+
+    // en el manejador tocar obtenemos el id del elemento que está siendo tocado y lo usamos para eliminarlo del DOM
+    console.log('tocarParaEliminar: idElementoEliminar',idElementoAEliminar);
+
+  
+
+    // extraemos el ultimo elemento del idElementoAEliminar, pues viene en formato letraNumero
+    let oldIdString = idElementoAEliminar.slice(-1);
+    
+    // si el ultimo elemento del id es diferente de cero, eliminamos los elementos del lienzo, y de los arreglos
+    // de lo contrario no hacemos nada, pues si el ultimo elemento del id es cero, significa que es el elemento de base
+    // y no queremos eliminar el elemento de base
+    if(oldIdString != 0){
+
+      // validamos que el idElementoAEliminar no esté vacio o nulo por alguna razón
+      if(idElementoAEliminar != null){
+        // realizamos las operaciones de eliminar si los elementos no están vacios o nulos
+        let elElementoAeliminar = document.getElementById(idElementoAEliminar);
+        
+        if(elElementoAeliminar != null){
+            // hacemos una segunda validacion pues puede que el idElementoAEliminar tenga contenido, pero en el DOM no exista y esté null
+
+            // eliminamos(remove) del source(origen) el elemento identificado mediante su id 
+            elElementoAeliminar.remove();
+            
+            //eliminamos del arreglo correspondiente el elemento tocado
+            EliminarDelArreglo(idElementoAEliminar);
+        
+            //eliminamos de la caja de codigo el elemento tocado
+            EliminarDeLaCajaCodigo(idElementoAEliminar);
+        }// fin elElementoAEliminar != null
+
+      }// fin idElementoEliminar null
+
+
+    }// fin oldIdString
+
+
 
 
   }
@@ -874,13 +1068,27 @@ function arrastrar(ev) {
     let laCajaDeCodigo = document.getElementById('cajaDeCodigo');
     laCajaDeCodigo.innerText = '';
 
+    // ubicamos las variables de cantidad de elementos y limites para reiniciarlos
+    limiteElementos = 0;
+    cantidadElementos = 0;
   }
 
   function generarLienzo12x12(){
     // console.log(lienzo12x12);
 
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    // que sea lo primero para que luego se setee el limite
     borrarTodosLosArreglos();
+
+
+    // establecemos el límite de elementos a arrastrar
+    limiteElementos = 144;
+    console.log('generarLienzo12x12 limiteElementos: ', limiteElementos);
+
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
+
+
 
     // buscamos el lienzo padre en el DOM
     let elLienzoPadre = document.getElementById('lienzoPadre');
@@ -898,6 +1106,8 @@ function arrastrar(ev) {
             for(let i=0; i<arregloContenedores.length;i++){
                 arregloContenedores[i].addEventListener('dragover', permitirSoltar);
                 arregloContenedores[i].addEventListener('drop', soltar);
+                // evento para tocar en version mobile para cada div generado dinamicamente
+                arregloContenedores[i].addEventListener('touchstart', tocar);
                 /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
                 arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
                 arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
@@ -911,7 +1121,15 @@ function arrastrar(ev) {
     // console.log(lienzo2x12);
 
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    // que sea lo primero para que luego se setee el limite
     borrarTodosLosArreglos();
+    
+    // establecemos el límite de elementos a arrastrar
+    limiteElementos = 24;
+    console.log('generarLienzo2x12 limiteElementos: ', limiteElementos);
+
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
 
     // buscamos el lienzo padre en el DOM
     let elLienzoPadre = document.getElementById('lienzoPadre');
@@ -928,6 +1146,8 @@ function arrastrar(ev) {
             for(let i=0; i<arregloContenedores.length;i++){
                 arregloContenedores[i].addEventListener('dragover', permitirSoltar);
                 arregloContenedores[i].addEventListener('drop', soltar);
+                // evento para tocar en version mobile para cada div generado dinamicamente
+                arregloContenedores[i].addEventListener('touchstart', tocar);
                 /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
                 arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
                 arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
@@ -943,7 +1163,15 @@ function arrastrar(ev) {
     // console.log(lienzo3x12);
 
     // Borramos todos los arreglos para que comience de nuevo el conteo de elementos
+    // que sea lo primero para que luego se setee el limite
     borrarTodosLosArreglos();
+    
+    // establecemos el límite de elementos a arrastrar
+    limiteElementos = 36;
+    console.log('generarLienzo3x12 limiteElementos: ', limiteElementos);
+
+    // mostramos la seccion de controles
+    habilitarSeccionControles();
 
     // buscamos el lienzo padre en el DOM
     let elLienzoPadre = document.getElementById('lienzoPadre');
@@ -960,6 +1188,8 @@ function arrastrar(ev) {
             for(let i=0; i<arregloContenedores.length;i++){
                 arregloContenedores[i].addEventListener('dragover', permitirSoltar);
                 arregloContenedores[i].addEventListener('drop', soltar);
+                // evento para tocar en version mobile para cada div generado dinamicamente
+                arregloContenedores[i].addEventListener('touchstart', tocar);
                 /* No funciona bien cambiar colores de los div en los eventos mouseover y mouseout*/
                 arregloContenedores[i].addEventListener('dragenter', dentroContenedor);
                 arregloContenedores[i].addEventListener('dragleave', fueraContenedor);
@@ -969,11 +1199,172 @@ function arrastrar(ev) {
   }
 
 
+  function deshabilitarSeccionControles(){
+           // buscamos el contenedor de controles
+           let elContenedorControles = document.getElementById('contenedorControles');
+           // ocultamos la seccion de controles
+           elContenedorControles.hidden = true; 
+  }
+
+  function habilitarSeccionControles(){
+    // buscamos el contenedor de controles
+    let elContenedorControles = document.getElementById('contenedorControles');
+    // mostramos la seccion de controles
+    elContenedorControles.hidden = false; 
+}
+
+function tocar(ev){
+  console.log('tocar ev: ', ev);
+  // definimos lógica para mover elementos por pares
+  //si el contadorTouch está en cero, incrementamos uno y guardamos el primer elemento tocado
+  if(contadorTouch == 0){
+    // incrementamos en uno el contador touch
+    contadorTouch+=1;
+    // guardamos el elemento tocado en la variable elementoTouch1
+    elementoTouch1 = ev.target.id;
+  } else if( contadorTouch == 1){
+    // regresamos el contadorTouch a cero, para que al hacer click en otro elemento comience de nuevo el proceso
+    contadorTouch=0;
+    // guardamos el elemento tocado en la variable elementoTouch2
+    elementoTouch2 = ev.target.id; 
+  }
+ 
+  console.log('tocar elementoTouch1: ', elementoTouch1);
+  console.log('tocar elementoTouch2: ', elementoTouch2);
+
+  // logica para identificar el elemento y el div
+  // extraemos el primer caracter del elementoTouch1, pues si es div, debe comenzar con la letra f
+  // slice extrae desde la posicion cero un caracter
+  let primerCaracterTouch1 = elementoTouch1.slice(0,1);
+  console.log('tocar primerCaracterTouch1', primerCaracterTouch1);
+  
+  // extraemos el primer caracter del elementoTouch1, pues si es div, debe comenzar con la letra f 
+    // slice extrae desde la posicion cero un caracter
+  let primerCaracterTouch2 = elementoTouch2.slice(0,1);
+  console.log('tocar primerCaracterTouch2', primerCaracterTouch2);
+
+  // variables para determinar el idDiDestino y el elemento a mover
+  let idDivDestino = '';
+  let idElementoAMover = '';
+  let autorizaMover = false;
+
+  // evaluamos si el primer caracter es una f y el segundo es diferente de f para identificar origen y destino
+  // por f comienzan los div
+  // diferente de f pueden ser controles
+  // si comienza por c es el contenedor de controles
+  if(primerCaracterTouch1 == 'f' && primerCaracterTouch2 != 'f' ){
+
+    // validamos si el segundo caracter es diferente de c, para descartar que sea el  div de controles
+    if(primerCaracterTouch2 != 'c'){
+
+        // identificamos el destino (target), especificamente su id
+        idDivDestino = elementoTouch1;
+        console.log('tocar el div de destino es : ', idDivDestino);
+        // identificamos el elemento a mover, especificamente su id
+        idElementoAMover = elementoTouch2;
+        console.log('tocar el elemento a mover es : ', idElementoAMover);
+
+        //cambiamos el flag de autoriza mover
+        autorizaMover = true;
+      }
+      else{
+                //cambiamos el flag de autoriza mover pues una de las cajas seleccionadas era la de controles
+                autorizaMover = false;
+      }
+  }
+  else if(primerCaracterTouch1 != 'f' && primerCaracterTouch2 == 'f'){
+  
+      // validamos si el primer caracter es diferente de c, para descartar que sea el  div de controles
+      if(primerCaracterTouch1 != 'c'){
+            // identificamos el destino (target), especificamente su id
+          idDivDestino = elementoTouch2;
+          console.log('tocar el div de destino es : ', idDivDestino);
+          // identificamos el elemento a mover, especificamente su id
+          idElementoAMover = elementoTouch1;
+          console.log('tocar el elemento a mover es : ', idElementoAMover);
+          //cambiamos el flag de autoriza mover
+          autorizaMover = true;    
+        }
+        else{
+          //cambiamos el flag de autoriza mover pues una de las cajas seleccionadas era la de controles
+          autorizaMover = false;
+        } 
+  }
+  else if(primerCaracterTouch1 == 'c' && primerCaracterTouch2 != 'f'){
+    // si el primer caracter es c , validamos si el segundo es diferente de c, porque puede que se haya presionado el contenedor de controles dos veces
+     if(primerCaracterTouch2 != 'c'){
+      // si el segundo caracter es diferente de c significa que se quiere eliminar un control
+        console.log('Elemento a eliminar identificado es: ', elementoTouch2);
+        tocarParaEliminar(elementoTouch2);
+        //cambiamos el flag de autoriza mover pues una de las cajas seleccionadas era la de controles
+        autorizaMover = false;
+     }
+  }
+  else if(primerCaracterTouch1 != 'f' && primerCaracterTouch2 == 'c'){
+    // si el segundo caracter es c , validamos si el primero es diferente de c, porque puede que se haya presionado el contenedor de controles dos veces
+    if(primerCaracterTouch1 != 'c'){
+      // si el primer caracter es diferente de c significa que se quiere eliminar un control
+       console.log('Elemento a eliminar identificado es: ', elementoTouch1);  
+       tocarParaEliminar(elementoTouch1);
+        //cambiamos el flag de autoriza mover pues una de las cajas seleccionadas era la de controles
+        autorizaMover = false;
+     }
+  }
+  else{
+    console.log('tocar ambos elementos son divs o ambos son controles');
+    //mantenemos el flag de autoriza mover en false
+    autorizaMover = false;
+  }
+
+  // si autoriza mover está en true, permitimos trasladar el elemento
+  if( autorizaMover){
+
+    // validamos que los idDivDestino y los elementos a mover idElementoAMover no estén vacios o nulos
+    if(idDivDestino != null){
+      if(idElementoAMover != null){
+            // identificamos el div destino
+            let elDivDestino = document.getElementById(idDivDestino);
+            // identificamos el elemento a mover 
+            let elElementoAMover = document.getElementById(idElementoAMover);
+
+            // realizamos una nueva validación, pues puede que los id tengan contenido, pero los elementos no existan en el DOM
+            if(elDivDestino != null && elElementoAMover !=null){
+                // agregamos (appendChild) al target(destino) el elemento a mover identificado mediante su id 
+                elDivDestino.appendChild(elElementoAMover);
+
+                // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
+                generarNuevoId(idElementoAMover, idDivDestino);
+            }
+
+      }
+    }
+
+
+  }// fin autoriza mover
+ 
+
+                
+  // identificamos el destino (target), especificamente su id
+  idDivDestino = ev.target.id;
+  // console.log('soltar idDivDestino: ',idDivDestino);
+  
+                
+
+
+
+
+
+
+}
+
+
   function asignarEventos(){
         // buscamos el contenedor de controles para permitir eliminar elementos que regresen de vuelta
         let elContenedorControles = document.getElementById('contenedorControles');
         elContenedorControles.addEventListener('dragover', permitirSoltar);
         elContenedorControles.addEventListener('drop', soltarParaEliminar);
+        // hacemos que el contenedor de controles reaccione al evento tocar
+        elContenedorControles.addEventListener('touchstart', tocar);
 
 
 
@@ -981,15 +1372,15 @@ function arrastrar(ev) {
         let elBotonBase = document.getElementById('button0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elBotonBase.addEventListener('dragstart', arrastrar);
-        // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elBotonBase.addEventListener('touchmove', arrastrar);
+        // asignamos al nuevo elemento el eventListener touchstart para visualización mobile
+        elBotonBase.addEventListener('touchstart', tocar);
 
         // buscamos la caja de texto de base en el DOM
         let elTextoBase = document.getElementById('text0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elTextoBase.addEventListener('dragstart', arrastrar);
         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elTextoBase.addEventListener('touchmove', arrastrar);
+        elTextoBase.addEventListener('touchstart', tocar);
 
 
         // buscamos el radio boton de base en el DOM
@@ -997,28 +1388,28 @@ function arrastrar(ev) {
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elRadioBase.addEventListener('dragstart', arrastrar);
         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elRadioBase.addEventListener('touchmove', arrastrar);
+        elRadioBase.addEventListener('touchstart', tocar);
 
         // buscamos el label de base en el DOM
         let elLabelBase = document.getElementById('label0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elLabelBase.addEventListener('dragstart', arrastrar);
         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elLabelBase.addEventListener('touchmove', arrastrar);
+        elLabelBase.addEventListener('touchstart', tocar);
 
         // buscamos el checkbox de base en el DOM
         let elCheckBase = document.getElementById('checkbox0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elCheckBase.addEventListener('dragstart', arrastrar);
         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elCheckBase.addEventListener('touchmove', arrastrar);
+        elCheckBase.addEventListener('touchstart', tocar);
 
         // buscamos el submit de base en el DOM
         let elSubmitBase = document.getElementById('submit0');
         // el evento dragstart tendrá asociado la función de callback de arrastrar
         elSubmitBase.addEventListener('dragstart', arrastrar);
         // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-        elSubmitBase.addEventListener('touchmove', arrastrar);
+        elSubmitBase.addEventListener('touchstart', tocar);
 
 
         // buscamos el boton de 12x12 
@@ -1032,6 +1423,9 @@ function arrastrar(ev) {
         // buscamos el boton de 3x12 
         let elBoton3x12 = document.getElementById('btn3x12');
         elBoton3x12.addEventListener('click', generarLienzo3x12);
+
+        // invocamos la función de ocultar controles. No se muestran hasta que se seleccione un layout
+        deshabilitarSeccionControles();
 
         
   }

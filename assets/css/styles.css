@@ -10,4 +10,31 @@
 .sin-bordes{
     border: none;
     outline: none;
+    background-color: lightcyan;
+}
+
+.seccion-layout{
+    border-style: solid;
+    border-color: green;
+}
+
+.seccion-controles{
+    border-style: solid;
+    border-color: blue;
+}
+
+.titulo-layout{
+    color:green;
+}
+
+.titulo-controles{
+    color:blue;
+}
+
+.fondo-lienzo{
+    background-color: darkseagreen;
+}
+
+.fondo-codigo{
+    background-color:lightcyan;
 }
