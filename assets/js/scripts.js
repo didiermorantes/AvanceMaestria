@@ -10,6 +10,8 @@ var arrLabel = ['label0'];
 var arrCheckbox = ['checkbox0'];
 // arreglo global para llevar registro de submit
 var arrSubmit = ['submit0'];
+// variable para guardar el ultimoTargetId después de haber editado un elemento
+var ultimoTargetId = '';
 
 
 function arrastrar(ev) {
@@ -23,11 +25,24 @@ function arrastrar(ev) {
       // console.log(ev);
       // no existe la propiedad dataTransfer en los eventos touch
       // extraemos los datos directamente de target
-      console.log(ev.target.id);
+      // console.log(arrastrar ev.target.id);
     }
     else if(ev.type == 'dragstart'){
       // El objeto DataTransfer se utiliza para contener los datos que se arrastran durante una operación de arrastrar y soltar
       ev.dataTransfer.setData("text/plain", ev.target.id);
+    
+    // el idAnterior que está produciendo el evento de arrastrar
+    let idAnterior = ev.target.id;
+    // console.log('arrastrar idAnterior: ', idAnterior);
+
+    // extraemos el ultimo elemento del idAnterior, pues viene en formato letraNumero
+    let oldIdString = idAnterior.slice(-1);
+    // si el número es diferente de cero, almacenamos el evento en ultimoTargetId, de lo contrario no porque fue arrastrado de la caja de controles
+      if(oldIdString != 0){
+      // almacenamos el ultimoTargetId por si editamos un elemento y queda en blanco
+      ultimoTargetId = ev.target.id;
+      }
+
     }
     
 
@@ -40,8 +55,22 @@ function arrastrar(ev) {
     // console.log(ev);
   }
 
+  function actualizarIdDivDestino(idAnterior, idDivDestino){
+    // console.log('actualizarIdDivDestino idAnterior: ', idAnterior);
+    // console.log('actualizarIdDivDestino idDivDestino: ', idDivDestino);
+    // actualizamos el span de posicion
+    let elIdSpanPosicion = 'posicion'+idAnterior;
+    let elSpanPosicion = document.getElementById(elIdSpanPosicion);
+    elSpanPosicion.innerText = idDivDestino;
+    // actualizamos la posicion de la caja de codigo
+    let elIdCajaDeCodigo = 'editar'+idAnterior;
+    let laCajaDeCodigo = document.getElementById(elIdCajaDeCodigo);
+    elSpanPosicion.innerText = idDivDestino;
+  }
+
+
   function generarNuevoId(idAnterior, idDivDestino){
-    // console.log(idAnterior);
+    // console.log('generarNuevoId: data idAnterior',idAnterior);
 
     // extraemos el nombre del id sin contar el número
     let nombreId = idAnterior.slice(0,-1);
@@ -52,6 +81,7 @@ function arrastrar(ev) {
     
     // convertimos el ultimo elemento en número
     let oldIdInt = Number(oldIdString);
+    // console.log('generarNuevoId oldIdInt: ', oldIdInt);
 
     // variable para el nuevo elemento arrastrado
     let elNuevoElemento = '';
@@ -410,11 +440,15 @@ function arrastrar(ev) {
       if(oldIdInt==0){
           // invocamos al método que enviará el código HTML del nuevo elemento a la sección de código, junto con su id
           enviarCodigoHTML(elNuevoElemento,nuevoNombreId, idDivDestino );
+          // si el oldIdInt es cero, actualizamos la referencia de ultimoTargetId actualizado con el nuevoNombreId
+          ultimoTargetId = nuevoNombreId;
+          // console.log('generarNuevoId ultimoTargetId: ',ultimoTargetId);
         }
         else{
           // si el ultimo numero del id no es cero,  hay que actualizar la caja de código
-          console.log('se movio elemento. Posiblemente haya cambiado codigo en la caja de codigo');
+          // console.log('se movio elemento. Posiblemente haya cambiado codigo en la caja de codigo');
           // la caja de codigo mantiene la referencia del primer lugar donde se movio y se comenzo a editar codigo
+          actualizarIdDivDestino(idAnterior, idDivDestino);
         }
 
 
@@ -536,6 +570,13 @@ function arrastrar(ev) {
     let elElementoAEliminar = document.getElementById(idElementoAEliminar);
     // removemos de la caja de código el elemento hijo identificado con el id recien configurado
     laCajaDeCodigo.removeChild(elElementoAEliminar);
+
+    // construimos el id del elemento a eliminar anteponiendole la palabra posicion al parámetro recibido
+    let idPosicionAEliminar = 'posicion'+ elementoAeliminar;
+    // identificamos el elemento de posicion a eliminar mediante el id construido
+    let elElementoPosicionAEliminar = document.getElementById(idPosicionAEliminar);
+    // removemos de la caja de código el elemento hijo identificado con el id recien configurado
+    laCajaDeCodigo.removeChild(elElementoPosicionAEliminar);
 
   }// fin function
 
@@ -700,20 +741,36 @@ function arrastrar(ev) {
 
   function noResaltarCajaCodigo(){
     // hacemos que el elemento que invoca la función (this) cambie su estilo
-    this.style.backgroundColor = 'white';
+    this.style.backgroundColor = 'lightcyan';
   }
 
-  function cambiarElemento(idDivAEditar, idCajaEdita){
-    // console.log('el id div a editar: ', idDivAEditar);
+  function cambiarElemento(idDivAEditar, idCajaEdita, id){
+    // console.log('cambiarElemento el id div a editar: ', idDivAEditar);
     // console.log('el id caja que edita: ', idCajaEdita);
+    // console.log('cambiarElemento el id elemento editado: ', id);
 
-    // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor)
-    let elElementoAEditar  = document.getElementById(idDivAEditar);
 
-    // el evento dragstart tendrá asociado la función de callback de arrastrar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
-    elElementoAEditar.addEventListener('dragstart', arrastrar);
+    // obtenemos el id registrado en la caja de span de posicion
+    // actualizamos el span de posicion
+    let elIdSpanPosicion = 'posicion'+id;
+    let elSpanPosicion = document.getElementById(elIdSpanPosicion);
+    let idDivDestino = elSpanPosicion.innerText;
+
+    // creamos la variable del elemento a editar que se llenará de acuerdo con la condicion de si el div ha cambiado desde la primera vez o si se ha movido
+    let elDivElementoAEditar = '';
+    // comparamos el idDivAEditar(id original si no se ha movido la caja desde la primera vez de arrastrado) con el id que se encuentre en el span posicion idDivDestino
+    if( idDivAEditar == idDivDestino){
+    // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor) dejando el idDivAEditar original (cuando se arrastró por primera vez)
+          elDivElementoAEditar  = document.getElementById(idDivAEditar);
+    }
+    else{
+          // buscamos en el dom el elemento editado, para cambiarlo (cambiamos realmente su div contenedor) dejando el idDivDestino (cuando se arrastró multiples veces el elemento)
+          elDivElementoAEditar  = document.getElementById(idDivDestino);
+    }
+
+
     // asignamos al nuevo elemento el eventListener touchmove para visualización mobile
-    elElementoAEditar.addEventListener('touchmove', arrastrar);
+    // elElementoAEditar.addEventListener('touchmove', arrastrar);
     
     // buscamos en el dom la caja que esta editando el documento
     let laCajaQueEdita = document.getElementById(idCajaEdita);
@@ -721,10 +778,16 @@ function arrastrar(ev) {
     // console.log('valor la caja que edita: ',laCajaQueEdita.value);
     // console.log('el elemento a editar: ', elElementoAEditar); 
     
-    // cambiamos el contenido del elemento a editar (divDestino) por el valor que contenga la caja que edita
-    elElementoAEditar.innerHTML =laCajaQueEdita.value;
+    // cambiamos el contenido del div a editar (divDestino) por el valor que contenga la caja que edita
+    elDivElementoAEditar.innerHTML =laCajaQueEdita.value;
 
+    // console.log('cambiarElemento elDivElementoAEditar: ', elDivElementoAEditar);
 
+    // ubicamos en el DOM el elemento a editar
+    let elElementoAEditar = document.getElementById(id);
+    // el evento dragstart tendrá asociado la función de callback de arrastrar. Es necesario asociar de nuevo el event listener porque se pierde al hacer cambios al elemento dinámicamente
+    elElementoAEditar.addEventListener('dragstart', arrastrar);
+    // console.log(elElementoAEditar);
 
 
   }
@@ -735,6 +798,7 @@ function arrastrar(ev) {
 
     // console.log(elemento);
     // console.log(typeof elemento);
+    // console.log('enviarCodigoHTML idDivDestino:', idDivDestino);
     // Extraemos el HTML del elemento arrastrado con la propiedad outerHTML y la convertimos en String
     let htmlExtraido = String(elemento.outerHTML);
     // console.log('htmlExtraido',htmlExtraido);
@@ -754,6 +818,7 @@ function arrastrar(ev) {
       sizeCajaCodigo = '40';
     }
 
+
     // creamos una nueva caja de texto que poseerá el código recién creado
     let nuevaCajaTexto = document.createElement('input');
     // establecemos los atributos de la nueva caja de texto indicando que es de tipo texto
@@ -764,6 +829,16 @@ function arrastrar(ev) {
     nuevaCajaTexto.setAttribute('class', 'sin-bordes');
     // generamos un id sintetico para la caja, de manera que se pueda ubicar en el DOM
     let idSinteticoCajaEdicion = 'editar'+id;
+    
+    // creamos una caja de span que identifique la posición del elemento html que se está arrastrando
+    let nuevoSpanPosicion = document.createElement('span');
+    let idSinteticoSpanPosicion = 'posicion'+id;
+    // asignamos el id sintetico al nuevo parrafo generado
+    nuevoSpanPosicion.id = idSinteticoSpanPosicion;  
+    // asignamos un fontSize de 7 a la posicion
+    nuevoSpanPosicion.style.fontSize = '9px';
+    nuevoSpanPosicion.innerText = idDivDestino;   
+
     // asignamos el id sintetico a la nueva caja generada
     nuevaCajaTexto.id = idSinteticoCajaEdicion;
     // le asignamos un event listener para que resalte con un color azul claro la caja que se esta editando
@@ -772,13 +847,21 @@ function arrastrar(ev) {
     nuevaCajaTexto.addEventListener('mouseout', noResaltarCajaCodigo );
     // hacemos que todas las cajas de texto reaccionen al evento onkeyup, es decir que reaccione cuando se escriba en las cajas pasando como argumentos el id del elemento que se va a editar y el id de la caja que edita
     // cuando se requiere llamar una función de callback con parámetros, se llama una función anonima que internamente llama a la función de callback con parámetros
-    nuevaCajaTexto.addEventListener('keyup',function() { cambiarElemento(idDivDestino, idSinteticoCajaEdicion);} );
+    nuevaCajaTexto.addEventListener('keyup',function() { cambiarElemento(idDivDestino, idSinteticoCajaEdicion, id);} );
 
     //asignamos como valor en la caja de código el html extraido
     nuevaCajaTexto.value = htmlExtraido;
 
+    // creamos un nuevo salto de linea
+    let nuevoSalto = document.createElement('br');
+
+    // añadimos a la caja de codigo  el nuevo elemento recién creado de span
+    laCajaDeCodigo.appendChild(nuevoSpanPosicion);
     // añadimos a la caja de codigo  el nuevo elemento recién creado 
-    laCajaDeCodigo.appendChild(nuevaCajaTexto);
+    laCajaDeCodigo.appendChild(nuevaCajaTexto);    
+    // añadimos a la caja de código el nuevo salto de linea
+    laCajaDeCodigo.appendChild(nuevoSalto);   
+
 
   }
 
@@ -793,13 +876,29 @@ function arrastrar(ev) {
         // en el manejador soltar obtenemos el id del elemento que está siendo arrastrado y lo usamos para moverlo al contenedor destino
         // data es el elemento que está siendo arrastrado
         var data = ev.dataTransfer.getData("text");
+        // console.log('soltar data: ',data);
+        // console.log('soltar ev.target: ',ev.target);
+        // console.log('soltar ultimaTargeId: ', ultimoTargetId);
+        
+        // evaluamos si data esta vacio. Si esta vacio es porque se ha editado el elemento
+        if(data == ''){
+          // console.log('soltar data esta vacio');
+          // puede que data este vacío por haber editado el elemento, así que lo reconstruimos
+              // El objeto DataTransfer no se puede modificar asi como en la siguiente linea
+              // ev.dataTransfer.setData("text/plain", ev.target.id);
+            // hacemos data igual al valor almacenado en el ultimoTargetId
+            data = ultimoTargetId;
+          // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data, que al estar vacia, enviamos el ultimo targetId
+            ev.target.appendChild(document.getElementById(data));
+
+        }
+        else{
+          // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
+          ev.target.appendChild(document.getElementById(data));
+        }
         // identificamos el destino (target), especificamente su id
         var idDivDestino = ev.target.id;
-        // console.log(idDivDestino);
-        // console.log(data);
-        console.log('ev.target',ev.target);
-        // agregamos (appendChild) al target(destino) el elemento identificado mediante su id y referenciado en la variable data
-        ev.target.appendChild(document.getElementById(data));
+        // console.log('soltar idDivDestino: ',idDivDestino);
 
         
         // invocamos al método generarNuevoId para que decida si se genera nuevo id y se reubique el elemento base en la sección de controles
