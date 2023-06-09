@@ -1,0 +1,5 @@
+Si quiere ejecutar el proyecto, solamente hay que abrir el archivo index.html
+
+Se recomienda usar el navegador Google Chrome, pues el navegador Mozilla FireFox tiene unos bugs aún no corregidos correspondientes a la API de drag and drop
+
+Se puede visualizar en dispositivos móviles y solamente hay que tocar el elemento origen y seleccionar en el lienzo de trabajo un lugar de destino
